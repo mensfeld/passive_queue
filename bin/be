@@ -1,0 +1,9 @@
+# ================================
+# exe/be
+# ================================
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "passive_queue"
+
+PassiveQueue::CLI.start(ARGV)

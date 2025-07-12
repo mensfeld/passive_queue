@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passive Queue - The Art of Non-Execution</title>
+
+    <script>
+        (function() {
+            // Get saved theme or default to auto
+            const savedTheme = localStorage.getItem('theme');
+            const themeToApply = savedTheme !== null ? savedTheme : 'auto';
+            
+            function getSystemTheme() {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            let actualTheme;
+            if (themeToApply === 'auto') {
+                actualTheme = getSystemTheme();
+            } else {
+                actualTheme = themeToApply;
+            }
+            
+            // Apply theme immediately to prevent flash
+            document.documentElement.setAttribute('data-theme', actualTheme);
+            
+            // Store current preference for later use
+            window.currentThemePreference = themeToApply;
+        })();
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    
+    <!-- Highlight.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ruby.min.js"></script>
+    
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    
+    /* Light mode gradients and shadows (default) */
+    .zen-gradient { 
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
+    }
+    .peaceful-shadow { 
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
+    }
+    
+    /* Dark mode variations */
+    [data-theme="dark"] .zen-gradient { 
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
+    }
+    [data-theme="dark"] .peaceful-shadow { 
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
+    }
+    
+    /* Animations remain the same */
+    .loading-dots::after {
+        content: '';
+        animation: dots 2s infinite;
+    }
+    @keyframes dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60% { content: '...'; }
+        80%, 100% { content: ''; }
+    }
+    .float { animation: float 6s ease-in-out infinite; }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    /* Theme toggle button styles */
+    .theme-toggle {
+        display: none;
+        width: 48px;
+        height: 24px;
+        background: var(--fallback-b2,oklch(var(--b2)));
+        border-radius: 12px;
+        border: 2px solid var(--fallback-bc,oklch(var(--bc)/0.2));
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .theme-toggle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 2px;
+        transform: translateY(-50%);
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .theme-toggle::before {
+        content: '';
+        left: 22px;
+    }
+
+    .theme-toggle::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: var(--fallback-bc,oklch(var(--bc)));
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .theme-toggle::after {
+        transform: translateX(20px);
+    }
+    
+    /* Code container dark mode support */
+    .code-container {
+        background: #1f2937;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+
+    [data-theme="dark"] .code-container {
+        background: #0f172a;
+        border: 1px solid #334155;
+    }
+</style>
+
+    <style>
+
+        
+        /* Custom styling for the code block */
+        .code-container {
+            background: #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+        
+        .code-container pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .code-container code {
+            background: transparent;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        /* Highlight.js theme customization for dark background */
+        .hljs {
+            background: transparent !important;
+            color: #e5e7eb;
+        }
+        
+        .hljs-comment {
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .hljs-string {
+            color: #10b981;
+        }
+        
+        .hljs-keyword {
+            color: #8b5cf6;
+        }
+        
+        .hljs-title {
+            color: #3b82f6;
+        }
+        
+        .hljs-variable {
+            color: #ef4444;
+        }
+        
+        .hljs-symbol {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body class="zen-gradient min-h-screen">
+    <!-- Navigation -->
+    <div class="navbar bg-base-100/80 backdrop-blur-sm sticky top-0 z-50 peaceful-shadow">
+        <div class="navbar-start">
+            <div class="dropdown">
+                <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
+                    </svg>
+                </div>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#docs">Docs</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                </ul>
+            </div>
+            <a class="btn btn-ghost text-xl font-light" href="https://passivequeue.pro">
+
+
+    <img src="logo.svg" alt="Passive Queue Logo" 
+         class="w-16 h-16 mx-auto mb-0 block mr-2 logo-light" id="" style="width: 28px; height: 28px;">
+    <!-- Dark mode logo -->
+    <img src="logo-dark.svg" alt="Passive Queue Logo" 
+         class="w-16 h-16 mx-auto mb-0 mr-2 hidden logo-dark" id=""  style="width: 28px; height: 28px;">
+
+                Passive Queue
+            </a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 text-lg">
+                <li><a href="#features" class="font-light">Features</a></li>
+                <li><a href="#pricing" class="font-light">Pricing</a></li>
+                <li><a href="#docs" class="font-light">Documentation</a></li>
+                <li><a href="#demo" class="font-light">Demo</a></li>
+            </ul>
+        </div>
+
+<div class="navbar-end">
+    <!-- Theme Toggle -->
+    <div class="flex items-center gap-2 mr-4">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </div>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                <li><a onclick="setTheme('light')">☀️ Light Mode</a></li>
+                <li><a onclick="setTheme('dark')">🌙 Dark Mode</a></li>
+                <li><a onclick="setTheme('auto')">🔄 Auto (System)</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Your existing GitHub link -->
+            <a href="https://github.com/mensfeld/passive_queue" class="btn btn-ghost btn-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                </svg>
+                GitHub
+            </a>
+</div>
+
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero min-h-screen bg-gradient-to-b from-base-100/50 to-transparent">
+        <div class="hero-content text-center">
+            <div class="max-w-4xl">
+<div class="float mb-8">
+    <!-- Light mode logo -->
+    <img src="logo.svg" alt="Passive Queue Logo" 
+         class="w-56 h-56 mx-auto mb-4 block logo-light" id="" style="width: 224px; height: 224px;">
+    <!-- Dark mode logo -->
+    <img src="logo-dark.svg" alt="Passive Queue Logo" 
+         class="w-56 h-56 mx-auto mb-4 hidden logo-dark" id=""  style="width: 224px; height: 224px;">
+</div>
+
+<script>
+
+function updateLogos() {
+    // Check the actual applied theme instead of system preference
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const lightLogos = document.querySelectorAll('.logo-light');
+    const darkLogos = document.querySelectorAll('.logo-dark');
+
+    if (currentTheme === 'dark') {
+        lightLogos.forEach(logo => logo.classList.add('hidden'));
+        darkLogos.forEach(logo => logo.classList.remove('hidden'));
+    } else {
+        lightLogos.forEach(logo => logo.classList.remove('hidden'));
+        darkLogos.forEach(logo => logo.classList.add('hidden'));
+    }
+}
+
+
+// Update on load and when system theme changes
+updateLogos();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateLogos);
+</script>
+                <h1 class="text-6xl font-light text-base-content mb-6">
+                    Passive Queue
+                </h1>
+                <p class="text-xl font-light text-base-content/70 mb-2">
+                    The Rails Job Processing Backend That Finally Gets It
+                </p>
+                <p class="text-lg font-extralight text-base-content/60 mb-8 italic">
+                    "Why do today what you can put off indefinitely?"
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#install" class="btn btn-primary btn-lg">
+                        Get Started Right Now!
+                    </a>
+                    <button class="btn btn-outline btn-lg">
+                        View Documentation
+                    </button>
+                </div>
+                <div class="mt-8 text-sm text-base-content/80">
+                    ✨ 100% Free ✨ Zero Dependencies ✨ Infinite Scalability
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-light mb-4">Why Choose Passive Queue?</h2>
+                <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+                    Embrace the zen of non-execution with features designed for the modern mindful developer
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🎯</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">100% Reliable Non-Execution</h3>
+                        <p class="text-base-content/70">Every job you schedule is guaranteed to not run. Zero false positives - your tasks will never accidentally complete.</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">⚡</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">Blazing Fast Non-Performance</h3>
+                        <p class="text-base-content/70">Completes in 0ms every time. Infinite scalability since nothing scales faster than nothing.</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🔧</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">Drop-in Replacement</h3>
+                        <p class="text-base-content/70">Simply set Passive Queue as your queue adapter. All your existing jobs will gracefully do nothing.</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">📊</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">Advanced Non-Monitoring</h3>
+                        <p class="text-base-content/70">Real-time dashboard showing exactly how much isn't happening with detailed logs of non-executed tasks.</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">🧘</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">Zen Mode Integration</h3>
+                        <p class="text-base-content/70">Built-in mindfulness features including <code>bundle exec be passive</code> for ultimate developer tranquility.</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body text-center">
+                        <div class="text-4xl mb-4">💚</div>
+                        <h3 class="card-title justify-center mb-2 font-medium">Zero Carbon Footprint</h3>
+                        <p class="text-base-content/70">The most environmentally friendly job processor. When you do nothing, you consume nothing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Example -->
+    <section class="py-20 zen-gradient" id="install">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-light mb-4">Simple. Elegant. Nothing.</h2>
+                <p class="text-lg text-base-content/70">Getting started is as easy as doing nothing</p>
+            </div>
+
+<div class="max-w-4xl mx-auto">
+    <div class="code-container peaceful-shadow">
+        <pre><code class="language-ruby"># 1. Add it to your Gemfile
+gem "passive_queue"
+
+# 2. Set it as your queue adapter
+class Application < Rails::Application
+  # ...
+  config.active_job.queue_adapter = :passive_queue
+end
+
+# 3. Simply run it!
+bundle exec be passive</code></pre>
+    </div>
+</div>
+        </div>
+    </section>
+
+    <!-- Live Demo Section -->
+<section id="demo" class="py-20 bg-base-100">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-light mb-4">Live Demo</h2>
+            <p class="text-lg text-base-content/70">Experience Passive Queue in action</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            <div class="card bg-base-300 peaceful-shadow">
+                <div class="card-body">
+                    <h3 class="card-title justify-center mb-4">Passive Queue Dashboard</h3>
+                    <div class="bg-base-200 stats stats-vertical lg:stats-horizontal shadow">
+                        <div class="stat">
+                            <div class="stat-title">Jobs Queued</div>
+                            <div class="stat-value text-primary">∞</div>
+                            <div class="stat-desc">All waiting peacefully</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Jobs Processed</div>
+                            <div class="stat-value text-secondary">0</div>
+                            <div class="stat-desc">Perfect execution rate</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Uptime</div>
+                            <div class="stat-value text-accent">100%</div>
+                            <div class="stat-desc">Of doing nothing</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <button class="btn btn-primary w-full" onclick="simulateJob()">
+                            Schedule Demo Job
+                        </button>
+                        <div id="demo-output" class="mt-8 code-container peaceful-shadow">
+                            <pre><code class="language-ruby"># Waiting for job to be scheduled...</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 zen-gradient">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-light mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-lg text-base-content/70">Pay nothing, get nothing. It's that simple.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Free Tier -->
+                <div class="card bg-base-100 peaceful-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title justify-center text-2xl font-light">Free</h3>
+                        <div class="text-center">
+                            <div class="text-5xl font-light mb-2">$0</div>
+                            <div class="text-base-content/60">forever</div>
+                        </div>
+                        <div class="divider"></div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Up to ∞ jobs that won't run
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Basic non-monitoring
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Community non-support
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Zero carbon footprint
+                            </li>
+                        </ul>
+                        <div class="card-actions justify-center mt-6">
+                            <a href="#install" class="btn btn-outline btn-wide">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pro Tier -->
+                <div class="card bg-base-100 peaceful-shadow border-2 border-primary">
+                    <div class="badge badge-primary absolute top-4 right-4">Most Popular</div>
+                    <div class="card-body">
+                        <h3 class="card-title justify-center text-2xl font-light">Pro</h3>
+                        <div class="text-center">
+                            <div class="text-5xl font-light mb-2">$0</div>
+                            <div class="text-base-content/60">per month</div>
+                        </div>
+                        <div class="divider"></div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Everything in Free
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Advanced non-analytics
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Priority non-execution
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Zen koans included
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                24/7 non-support
+                            </li>
+                        </ul>
+                        <div class="card-actions justify-center mt-6">
+                            <a href="#install" class="btn btn-primary btn-wide">Choose Pro</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="card bg-base-100 peaceful-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title justify-center text-2xl font-light">Enterprise</h3>
+                        <div class="text-center">
+                            <div class="text-5xl font-light mb-2">$0</div>
+                            <div class="text-base-content/60">per month</div>
+                        </div>
+                        <div class="divider"></div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Everything in Pro
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Dedicated non-account manager
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                Custom non-integrations
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                SLA guaranteeing 99.99% non-uptime
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                On-premise nothing deployment
+                            </li>
+                        </ul>
+                        <div class="card-actions justify-center mt-6">
+                            <a href="mailto:void@passivequeue.io" class="btn btn-outline btn-wide">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-light mb-4">What Our Users Are Saying</h2>
+                <p class="text-lg text-base-content/80">Real feedback from developers who've achieved true non-productivity</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body">
+                        <p class="text-base-content/80 mb-4">"I scheduled 10,000 jobs last month and Passive Queue delivered on its promise - not a single one ran. Amazing!"</p>
+                        <div class="flex items-center">
+                            <div class="avatar placeholder mr-3">
+                                <div class="bg-neutral text-center p-2 text-neutral-content rounded-full w-10">
+                                    <span class="text-sm">SK</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Sarah K.</div>
+                                <div class="text-sm text-base-content/60">Senior Procrastination Engineer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body">
+                        <p class="text-base-content/80 mb-4">"Finally, a job processor that matches my work ethic. Passive Queue has revolutionized how I don't approach background tasks."</p>
+                        <div class="flex items-center">
+                            <div class="avatar placeholder mr-3">
+                                <div class="bg-primary text-center p-2 text-primary-content rounded-full w-10">
+                                    <span class="text-sm">MT</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mike T.</div>
+                                <div class="text-sm text-base-content/60">Professional Postponer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-300 peaceful-shadow">
+                    <div class="card-body">
+                        <p class="text-base-content/80 mb-4">"Our productivity has never been lower. The peace of mind knowing nothing will ever execute accidentally is priceless."</p>
+                        <div class="flex items-center">
+                            <div class="avatar placeholder mr-3">
+                                <div class="bg-secondary text-center p-2 text-secondary-content rounded-full w-10">
+                                    <span class="text-sm">DT</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-medium">DevOps Team</div>
+                                <div class="text-sm text-base-content/60">Startup McStartupface</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<div class="card bg-base-300 peaceful-shadow">
+    <div class="card-body">
+        <p class="text-base-content/80 mb-4">"Since switching to Passive Queue, our newsletter emails never end up in spam folders. Our customers love the mystery of our non-communication strategy!"</p>
+        <div class="flex items-center">
+            <div class="avatar placeholder mr-3">
+                <div class="bg-accent text-center p-2 text-accent-content rounded-full w-10">
+                    <span class="text-sm">JR</span>
+                </div>
+            </div>
+            <div>
+                <div class="font-medium">Jessica R.</div>
+                <div class="text-sm text-base-content/60">Email Marketing Zen Master</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-base-300 peaceful-shadow">
+    <div class="card-body">
+        <p class="text-base-content/80 mb-4">"Our data processing jobs can't corrupt the database if they never run. We've achieved 100% data integrity through the power of inaction!"</p>
+        <div class="flex items-center">
+            <div class="avatar placeholder mr-3">
+                <div class="bg-warning text-center p-2 text-warning-content rounded-full w-10">
+                    <span class="text-sm">AL</span>
+                </div>
+            </div>
+            <div>
+                <div class="font-medium">Alex L.</div>
+                <div class="text-sm text-base-content/60">Data Integrity Philosopher</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-base-300 peaceful-shadow">
+    <div class="card-body">
+        <p class="text-base-content/80 mb-4">"Image resizing tasks that don't execute can't fill up our disk space. We've solved our storage problems by embracing the void. Genius!"</p>
+        <div class="flex items-center">
+            <div class="avatar placeholder mr-3">
+                <div class="bg-info text-center p-2 text-info-content rounded-full w-10">
+                    <span class="text-sm">CM</span>
+                </div>
+            </div>
+            <div>
+                <div class="font-medium">Carlos M.</div>
+                <div class="text-sm text-base-content/60">Storage Optimization Guru</div>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+
+
+
+    </section>
+
+    <!-- Benchmark Section -->
+    <section class="py-20 zen-gradient">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-light mb-4">Performance Benchmarks</h2>
+                <p class="text-lg text-base-content/70">See how Passive Queue outperforms the competition in key metrics</p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <!-- Job Scheduling Speed -->
+                <div class="card bg-base-300 mb-8">
+                    <div class="card-body">
+                        <h3 class="card-title text-2xl font-light mb-6 justify-center">Job Scheduling Speed</h3>
+                        <div class="overflow-x-auto">
+                            <table class="table table-zebra w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Queue System</th>
+                                        <th>Jobs/Second</th>
+                                        <th>Latency (ms)</th>
+                                        <th>Memory Usage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover">
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-success text-center p-1 text-success-content rounded w-8 h-8">
+                                                        <span class="text-xs">PQ</span>
+                                                    </div>
+                                                </div>
+                                                <div class="font-bold text-success">Passive Queue</div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-success">10,000,000</span></td>
+                                        <td><span class="badge badge-success">0ms</span></td>
+                                        <td><span class="badge badge-success">0 MB</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-warning text-center p-1  text-warning-content rounded w-8 h-8">
+                                                        <span class="text-xs">SQ</span>
+                                                    </div>
+                                                </div>
+                                                <div>Sidekiq</div>
+                                            </div>
+                                        </td>
+                                        <td>4,137</td>
+                                        <td>2.3ms</td>
+                                        <td>45 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-info text-center p-1  text-info-content rounded w-8 h-8">
+                                                        <span class="text-xs">SQ</span>
+                                                    </div>
+                                                </div>
+                                                <div>Solid Queue</div>
+                                            </div>
+                                        </td>
+                                        <td>1,932</td>
+                                        <td>3.1ms</td>
+                                        <td>32 MB</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-secondary text-center p-1  text-secondary-content rounded w-8 h-8">
+                                                        <span class="text-xs">KF</span>
+                                                    </div>
+                                                </div>
+                                                <div>Karafka</div>
+                                            </div>
+                                        </td>
+                                        <td>22,850</td>
+                                        <td>1.8ms</td>
+                                        <td>78 MB</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Execution Speed -->
+                <div class="card bg-base-300 mb-8">
+                    <div class="card-body">
+                        <h3 class="card-title text-2xl font-light mb-6 justify-center">Job Execution Performance</h3>
+                        <div class="overflow-x-auto">
+                            <table class="table table-zebra w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Queue System</th>
+                                        <th>Avg Execution Time</th>
+                                        <th>Success Rate</th>
+                                        <th>Failed Jobs</th>
+                                        <th>Retry Overhead</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover">
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-success text-center p-1  text-success-content rounded w-8 h-8">
+                                                        <span class="text-xs">PQ</span>
+                                                    </div>
+                                                </div>
+                                                <div class="font-bold text-success">Passive Queue</div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-success">0ms</span></td>
+                                        <td><span class="badge badge-success">100%</span></td>
+                                        <td><span class="badge badge-success">0</span></td>
+                                        <td><span class="badge badge-success">None</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-warning text-center p-1  text-warning-content rounded w-8 h-8">
+                                                        <span class="text-xs">SQ</span>
+                                                    </div>
+                                                </div>
+                                                <div>Sidekiq</div>
+                                            </div>
+                                        </td>
+                                        <td>127ms</td>
+                                        <td>97.3%</td>
+                                        <td>2.7%</td>
+                                        <td>High</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-info text-center p-1  text-info-content rounded w-8 h-8">
+                                                        <span class="text-xs">SQ</span>
+                                                    </div>
+                                                </div>
+                                                <div>Solid Queue</div>
+                                            </div>
+                                        </td>
+                                        <td>156ms</td>
+                                        <td>96.8%</td>
+                                        <td>3.2%</td>
+                                        <td>Medium</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar placeholder">
+                                                    <div class="bg-secondary text-center p-1  text-secondary-content rounded w-8 h-8">
+                                                        <span class="text-xs">KF</span>
+                                                    </div>
+                                                </div>
+                                                <div>Karafka</div>
+                                            </div>
+                                        </td>
+                                        <td>89ms</td>
+                                        <td>98.1%</td>
+                                        <td>1.9%</td>
+                                        <td>Low</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scalability Chart -->
+                <div class="card bg-base-300 mb-8">
+                    <div class="card-body">
+                        <h3 class="card-title text-2xl font-light mb-6 justify-center">Scalability Under Load</h3>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-medium mb-4">CPU Usage at 100k Jobs/hour</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span>Passive Queue</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-success w-32" value="0" max="100"></progress>
+                                            <span class="text-sm font-mono">0%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Sidekiq</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-warning w-32" value="85" max="100"></progress>
+                                            <span class="text-sm font-mono">85%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Solid Queue</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-info w-32" value="78" max="100"></progress>
+                                            <span class="text-sm font-mono">78%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Karafka</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-secondary w-32" value="92" max="100"></progress>
+                                            <span class="text-sm font-mono">92%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-medium mb-4">Memory Usage Growth</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span>Passive Queue</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-success w-32" value="0" max="100"></progress>
+                                            <span class="text-sm font-mono">0 MB</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Sidekiq</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-warning w-32" value="70" max="100"></progress>
+                                            <span class="text-sm font-mono">1.2 GB</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Solid Queue</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-info w-32" value="45" max="100"></progress>
+                                            <span class="text-sm font-mono">780 MB</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Karafka</span>
+                                        <div class="flex items-center space-x-2">
+                                            <progress class="progress progress-secondary w-32" value="95" max="100"></progress>
+                                            <span class="text-sm font-mono">1.8 GB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="stats stats-vertical lg:stats-horizontal w-full mb-8 bg-base-300">
+                    <div class="stat">
+                        <div class="stat-title text-center">Speed Advantage</div>
+                        <div class="stat-value text-primary text-center">∞x</div>
+                        <div class="stat-desc text-center">Faster than any competitor</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-title text-center">Cost Savings</div>
+                        <div class="stat-value text-secondary text-center">100%</div>
+                        <div class="stat-desc text-center">Zero infrastructure costs</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-title text-center">Energy Efficiency</div>
+                        <div class="stat-value text-accent text-center">Perfect</div>
+                        <div class="stat-desc text-center">Zero carbon footprint</div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <div>
+                        <div class="font-medium">Benchmark Disclaimer</div>
+                        <div class="text-sm">* All benchmark data has been carefully fabricated for entertainment purposes. Passive Queue's performance is theoretically perfect because it literally does nothing. Results may vary in production environments.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Teaser -->
+<!-- Documentation Teaser -->
+<section id="docs" class="py-20 bg-base-100">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-light mb-4">Documentation</h2>
+            <p class="text-lg text-base-content/70">Everything you need to know about doing nothing</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            <div class="card bg-base-300 peaceful-shadow">
+                <div class="card-body">
+                    <div class="prose max-w-none">
+                        <p>Getting started with Passive Queue is refreshingly simple:</p>
+                        
+                        <h4 class="text-2xl font-light mb-4 mt-4">Installation</h4>
+                        <div class="code-container peaceful-shadow">
+                            <pre><code class="language-ruby"># Gemfile:
+gem "passive_queue"
+
+# CLI command:
+bundle install</code></pre>
+                        </div>
+                        
+                        <h4 class="text-2xl font-light mb-4 mt-4">Configuration</h4>
+                        <div class="code-container peaceful-shadow">
+                            <pre><code class="language-ruby"># config/application.rb
+config.active_job.queue_adapter = :passive_queue</code></pre>
+                        </div>
+                        
+                        <h4 class="text-2xl font-light mb-4 mt-4">The Art of Being Passive</h4>
+                        <div class="code-container peaceful-shadow">
+                            <pre><code class="language-bash"># Embrace the void
+bundle exec be passive
+# Meditate on your non-productivity
+bundle exec be passive --zen
+# Question the nature of execution
+bundle exec be passive --philosophical</code></pre>
+                        </div>
+                        
+                        <div class="alert alert-info mt-6">
+                            <span class="text-info-content">
+                                💡 Pro tip: The most productive thing you can do is nothing. Passive Queue helps you achieve this zen state effortlessly.
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions justify-center mt-8">
+                        <button class="btn btn-primary">View Full Documentation</button>
+                        <button class="btn btn-outline">API Reference</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Footer -->
+    <footer class="footer footer-center p-10 bg-base-200 text-base-content">
+        <aside>
+            <div class="text-4xl mb-4">
+    <img src="logo.svg" alt="Passive Queue Logo" 
+         class="w-16 h-16 mx-auto mb-0 block mr-2 logo-light" id="" style="width: 34px; height: 34px;">
+    <!-- Dark mode logo -->
+    <img src="logo-dark.svg" alt="Passive Queue Logo" 
+         class="w-16 h-16 mx-auto mb-0 mr-2 hidden logo-dark" id=""  style="width: 34px; height: 34px;">
+
+            </div>
+            <p class="font-bold text-lg">Passive Queue</p>
+            <p class="font-light">The Art of Non-Execution</p>
+            <p class="text-sm text-base-content/60">© 2025 Maciej Mensfeld. All rights reserved. No jobs were harmed in the making of this product.</p>
+        </aside>
+        <nav>
+            <div class="grid grid-flow-col gap-4">
+                <a href="https://github.com/mensfeld/passive_queue" class="link link-hover">GitHub</a>
+                <a href="#docs" class="link link-hover">Documentation</a>
+                <a href="https://github.com/mensfeld/passive_queue/issues" class="link link-hover">Support</a>
+                <a href="https://mensfeld.pl/tag/passive_queue/" class="link link-hover">Blog</a>
+            </div>
+        </nav>
+        <nav>
+            <div class="grid grid-flow-col gap-4">
+                <a href="https://twitter.com/maciejmensfeld" class="btn btn-ghost btn-sm">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/mensfeld/passive_queue" class="btn btn-ghost btn-sm">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </footer>
+
+    <!-- JavaScript for Demo -->
+    <script>
+        function simulateJob() {
+            const output = document.getElementById('demo-output');
+            output.innerHTML = '<div class="loading loading-dots hljs-comment loading-lg"></div><div class="mt-2 hljs-comment">Scheduling job...</div>';
+            
+            setTimeout(() => {
+                output.innerHTML = `
+                    <div class="text-success">✓ Job scheduled successfully!</div>
+                    <div class="mt-2 text-white">Job ID: passive-job-${Date.now()}</div>
+                    <div class="mt-2 text-white">Status: Queued and being ignored</div>
+                    <div class="mt-2 text-white">Expected completion: Never</div>
+                    <div class="mt-4 text-info">🧘 Your job is now in a state of perfect non-execution</div>
+                `;
+            }, 2000);
+            
+            setTimeout(() => {
+                output.innerHTML += '<div class="mt-4 text-warning">💡 Fun fact: This job will consume 0 CPU cycles and 0 memory!</div>';
+            }, 4000);
+        }
+
+function updateLogos() {
+    // Check the actual applied theme instead of system preference
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const lightLogos = document.querySelectorAll('.logo-light');
+    const darkLogos = document.querySelectorAll('.logo-dark');
+
+    if (currentTheme === 'dark') {
+        lightLogos.forEach(logo => logo.classList.add('hidden'));
+        darkLogos.forEach(logo => logo.classList.remove('hidden'));
+    } else {
+        lightLogos.forEach(logo => logo.classList.remove('hidden'));
+        darkLogos.forEach(logo => logo.classList.add('hidden'));
+    }
+}
+
+        // Theme toggle functionality
+function toggleTheme() {
+    const html = document.querySelector('html');
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    // Update logos
+    updateLogos();
+}
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.querySelector('html').setAttribute('data-theme', savedTheme);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Easter egg: Konami code for ultimate zen mode
+        let konamiCode = [];
+        const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                document.body.innerHTML = `
+                    <div class="hero min-h-screen bg-base-100 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-9xl mb-8 animate-spin">🧘‍♂️</div>
+                            <h1 class="text-6xl font-light mb-4">Ultimate Zen Mode Activated</h1>
+                            <p class="text-xl mb-8">You have achieved the highest level of non-productivity</p>
+                            <button class="btn btn-primary" onclick="location.reload()">Return to Reality</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    </script>
+    <script>
+        // Initialize highlight.js
+        hljs.highlightAll();
+    </script>
+
+
+
+<script>
+// Theme management system
+let currentThemePreference = 'auto'; // Track current preference
+
+function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+    currentThemePreference = theme;
+    
+    if (theme === 'auto') {
+        const systemTheme = getSystemTheme();
+        document.documentElement.setAttribute('data-theme', systemTheme);
+        return systemTheme;
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+        return theme;
+    }
+}
+
+function setTheme(theme) {
+    localStorage.setItem('theme', theme);
+    applyTheme(theme);
+    updateLogos()
+}
+
+function toggleTheme() {
+    const themes = ['light', 'dark', 'auto'];
+    const currentIndex = themes.indexOf(currentThemePreference);
+    const nextTheme = themes[(currentIndex + 1) % themes.length];
+    setTheme(nextTheme);
+    updateLogos()
+}
+
+function initTheme() {
+    // Get saved theme or default to auto
+    const savedTheme = localStorage.getItem('theme');
+    const themeToApply = savedTheme !== null ? savedTheme : 'auto';
+    
+    applyTheme(themeToApply);
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (currentThemePreference === 'auto') {
+            applyTheme('auto');
+        }
+    });
+
+    updateLogos()
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+    initTheme();
+}
+
+// Also run immediately to prevent flash
+initTheme();
+</script>
+</body>
+</html>
