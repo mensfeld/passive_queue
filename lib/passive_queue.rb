@@ -5,6 +5,8 @@ require "passive_queue/version"
 require "passive_queue/adapter"
 require "passive_queue/configuration"
 require "passive_queue/cli"
+require "passive_queue/web"
+require "passive_queue/engine"
 require "active_job/queue_adapters/passive_queue_adapter"
 
 module PassiveQueue

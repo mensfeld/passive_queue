@@ -400,7 +400,13 @@ class Application < Rails::Application
 end
 
 # 3. Simply run it!
-bundle exec be passive</code></pre>
+bundle exec be passive
+
+# 4. Optionally you can also use the Web UI
+Rails.application.routes.draw do
+  mount PassiveQueue::Engine => '/passive_queue'
+end
+</code></pre>
     </div>
 </div>
         </div>
