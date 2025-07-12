@@ -22,8 +22,7 @@ Gem::Specification.new do |spec|
     end
   end
 
-  spec.bindir = "bin"
-  spec.executables = spec.files.grep(%r{\Abin/}) { |f| File.basename(f) }
+  spec.executables = ['be']
   spec.require_paths = ["lib"]
   # NO runtime dependencies - true zen has no dependencies
 end
