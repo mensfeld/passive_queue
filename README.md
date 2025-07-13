@@ -428,7 +428,7 @@ Passive Queue is built on the fundamental principle that the most reliable code 
 - **Complete Compatibility**: Works with any existing job without modification
 - **Inner Peace**: Developers can rest easy knowing nothing will break
 
-## FAQ ❓
+## FAQ
 
 **Q: Will my jobs actually run?**
 A: No, and that's the point! Your jobs achieve perfect success by never executing.
