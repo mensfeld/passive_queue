@@ -60,6 +60,10 @@ Experience Passive Queue in action with our beautiful dashboard:
 
 Visit `/passive_queue` to witness the art of non-productivity in real-time with dark/light mode support!
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/web-ui.png" alt="passive queue dashboard">
+</div>
+
 ## Simple, Transparent Pricing
 
 Pay nothing, get nothing. It's that simple.
