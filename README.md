@@ -449,7 +449,7 @@ A: Why retry when you can achieve perfect success the first time by doing nothin
 
 We welcome contributions that further the art of non-productivity. Fork the repository, create a feature branch, commit your non-changes, push to the branch, and create a Pull Request for review.
 
-## License 📄
+## License
 
 This project is licensed under the MIT License.
 
