@@ -210,17 +210,17 @@
                     <li><a href="#demo">Demo</a></li>
                 </ul>
             </div>
-            <a class="btn btn-ghost text-xl font-light" href="https://passivequeue.pro">
 
 
+<a class="btn btn-ghost text-xl font-light" href="https://passivequeue.pro">
     <img src="logo.svg" alt="Passive Queue Logo" 
-         class="w-16 h-16 mx-auto mb-0 block mr-2 logo-light" id="" style="width: 28px; height: 28px;">
+         class="w-16 h-16 mx-auto mb-0 block mr-2 logo-light hidden md:block" id="" style="width: 28px; height: 28px;">
     <!-- Dark mode logo -->
     <img src="logo-dark.svg" alt="Passive Queue Logo" 
-         class="w-16 h-16 mx-auto mb-0 mr-2 hidden logo-dark" id=""  style="width: 28px; height: 28px;">
+         class="w-16 h-16 mx-auto mb-0 mr-2 hidden logo-dark md:block" id=""  style="width: 28px; height: 28px;">
+    <span class="hidden md:inline">Passive Queue</span>
+</a>
 
-                Passive Queue
-            </a>
         </div>
         <div class="navbar-center hidden lg:flex">
             <ul class="menu menu-horizontal px-1 text-lg">
@@ -1035,7 +1035,8 @@ bundle exec be passive --philosophical</code></pre>
     </div>
 </section>
     <!-- Footer -->
-    <footer class="footer footer-center p-10 bg-base-200 text-base-content">
+
+<footer class="footer footer-center p-10 bg-base-200 text-base-content hidden md:block">
         <aside>
             <div class="text-4xl mb-4">
     <img src="logo.svg" alt="Passive Queue Logo" 
@@ -1049,7 +1050,7 @@ bundle exec be passive --philosophical</code></pre>
             <p class="font-light">The Art of Non-Execution</p>
             <p class="text-sm text-base-content/60">© 2025 Maciej Mensfeld. All rights reserved. No jobs were harmed in the making of this product.</p>
         </aside>
-        <nav>
+        <nav class="mt-6">
             <div class="grid grid-flow-col gap-4">
                 <a href="https://github.com/mensfeld/passive_queue" class="link link-hover">GitHub</a>
                 <a href="#docs" class="link link-hover">Documentation</a>
@@ -1057,7 +1058,7 @@ bundle exec be passive --philosophical</code></pre>
                 <a href="https://mensfeld.pl/tag/passive_queue/" class="link link-hover">Blog</a>
             </div>
         </nav>
-        <nav>
+        <nav class="mt-6">
             <div class="grid grid-flow-col gap-4">
                 <a href="https://twitter.com/maciejmensfeld" class="btn btn-ghost btn-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
