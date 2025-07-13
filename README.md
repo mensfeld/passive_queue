@@ -10,27 +10,21 @@
 
 Passive Queue is a revolutionary background job processing system that achieves 100% success rate by never actually processing any jobs. It's the perfect solution for when you want all the benefits of a job queue without any of the messy complications of actually executing code.
 
-## Why Choose Passive Queue? 🎯
+## Why Choose Passive Queue?
 
 Embrace the zen of non-execution with features designed for the modern mindful developer:
 
-### 🎯 100% Reliable Non-Execution
-Every job you schedule is guaranteed to not run. Zero false positives - your tasks will never accidentally complete.
+- **🎯 100% Reliable Non-Execution** - Every job you schedule is guaranteed to not run. Zero false positives - your tasks will never accidentally complete.
 
-### ⚡ Blazing Fast Non-Performance
-Completes in 0ms every time. Infinite scalability since nothing scales faster than nothing.
+- **⚡ Blazing Fast Non-Performance** - Completes in 0ms every time. Infinite scalability since nothing scales faster than nothing.
 
-### 🔧 Drop-in Replacement
-Simply set Passive Queue as your queue adapter. All your existing jobs will gracefully do nothing.
+- **🔧 Drop-in Replacement** - Simply set Passive Queue as your queue adapter. All your existing jobs will gracefully do nothing.
 
-### 📊 Advanced Non-Monitoring
-Real-time dashboard showing exactly how much isn't happening with detailed logs of non-executed tasks.
+- **📊 Advanced Non-Monitoring** - Real-time dashboard showing exactly how much isn't happening with detailed logs of non-executed tasks.
 
-### 🧘 Zen Mode Integration
-Built-in mindfulness features including `bundle exec be passive` for ultimate developer tranquility.
+- **🧘 Zen Mode Integration** - Built-in mindfulness features including `bundle exec be passive` for ultimate developer tranquility.
 
-### 💚 Zero Carbon Footprint
-The most environmentally friendly job processor. When you do nothing, you consume nothing.
+- **💚 Zero Carbon Footprint** - The most environmentally friendly job processor. When you do nothing, you consume nothing.
 
 ## Simple. Elegant. Nothing. 
 
