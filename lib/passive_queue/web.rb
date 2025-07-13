@@ -98,6 +98,7 @@ module PassiveQueue
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Passive Queue Dashboard - The Art of Non-Execution</title>
+            <link rel="icon" href="/passive_queue/logo.svg" type="image/svg+xml">
 
             <script>
                 (function() {
