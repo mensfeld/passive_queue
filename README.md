@@ -1,4 +1,6 @@
-![passive queue logo](https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/logo.svg)
+<div align="center">
+  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/logo.svg" alt="passive queue logo" width="200">
+</div>
 
 **"Why do today what you can put off indefinitely?"**
 
