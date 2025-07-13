@@ -84,7 +84,7 @@ Pay nothing, get nothing. It's that simple.
 - ✓ SLA guaranteeing 99.99% non-uptime
 - ✓ On-premise nothing deployment
 
-## What Our Users Are Saying 💬
+## What Our Users Are Saying
 
 Real feedback from developers who've achieved true non-productivity:
 
@@ -112,7 +112,7 @@ Real feedback from developers who've achieved true non-productivity:
 > 
 > **Carlos M.** - Storage Optimization Guru
 
-## Performance Benchmarks 📈
+## Performance Benchmarks
 
 See how Passive Queue outperforms the competition in key metrics:
 
@@ -141,7 +141,7 @@ See how Passive Queue outperforms the competition in key metrics:
 
 *Benchmark Disclaimer: All benchmark data has been carefully fabricated for entertainment purposes. Passive Queue's performance is theoretically perfect because it literally does nothing. Results may vary in production environments.*
 
-## CLI Tools 💻
+## CLI Tools
 
 ### The Art of Being Passive
 
@@ -161,7 +161,7 @@ bundle exec be passive --duration 30
 
 💡 **Pro tip**: The most productive thing you can do is nothing. Passive Queue helps you achieve this zen state effortlessly.
 
-## Configuration ⚙️
+## Configuration
 
 ```ruby
 # config/initializers/passive_queue.rb
@@ -173,7 +173,7 @@ PassiveQueue.configure do |config|
 end
 ```
 
-## Complete API Reference 📚
+## Complete API Reference
 
 ### Core Adapter Class
 
@@ -414,7 +414,7 @@ PassiveQueue::Error < StandardError
 # - Throughput: ∞ jobs/second (in the realm of non-execution)
 ```
 
-## Philosophy 🤔
+## Philosophy
 
 Passive Queue is built on the fundamental principle that the most reliable code is code that never runs. By embracing the art of non-execution, we achieve:
 
@@ -423,18 +423,6 @@ Passive Queue is built on the fundamental principle that the most reliable code 
 - **Zero Resource Usage**: The ultimate in efficiency
 - **Complete Compatibility**: Works with any existing job without modification
 - **Inner Peace**: Developers can rest easy knowing nothing will break
-
-## Zen Quotes 🧘‍♂️
-
-> "The best job is the one never executed."
-
-> "In the stillness of non-processing, we find true performance."
-
-> "Why do something when you can do nothing?"
-
-> "The art of non-execution is the highest form of productivity."
-
-> "A queue that does nothing is a queue that never fails."
 
 ## FAQ ❓
 
@@ -453,7 +441,7 @@ A: There are no failed jobs, only successfully non-executed ones.
 **Q: What about job retries?**
 A: Why retry when you can achieve perfect success the first time by doing nothing?
 
-## Contributing 🤝
+## Contributing
 
 We welcome contributions that further the art of non-productivity. Fork the repository, create a feature branch, commit your non-changes, push to the branch, and create a Pull Request for review.
 
@@ -461,9 +449,9 @@ We welcome contributions that further the art of non-productivity. Fork the repo
 
 This project is licensed under the MIT License.
 
-## Acknowledgments 🙏
+## Acknowledgments
 
-Inspired by the zen philosophy of doing nothing. Built with love, Ruby, and an appreciation for the absurd. Special thanks to all the background jobs that never ran.
+Inspired by the zen philosophy of doing nothing and several attendees of the RailsConf 2025. Built with love, Ruby, and an appreciation for the absurd. Special thanks to all the background jobs that never ran.
 
 ---
 
