@@ -2,8 +2,6 @@
   <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/logo.svg" alt="passive queue logo" width="200">
 </div>
 
----
-
 # Passive Queue
 
 **"Why do today what you can put off indefinitely?"**
