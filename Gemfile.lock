@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    passive_queue (1.0.0)
+    passive_queue (1.0.1)
 
 GEM
   remote: https://rubygems.org/

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. Since this is Passive Queue, "changes" might be a strong word.
 
+## [1.0.1] - Unreleased
+
+### Fixed
+- Potential technical overhead by adding RSpec to the gem?
+
 ## [1.0.0] - 2025-07-12
 
 ### Added
