@@ -65,6 +65,10 @@ module PassiveQueue
     # Executes the passive meditation command
     #
     # @param options [Hash] parsed command-line options
+    # @option options [Boolean] :zen enable zen quotes during meditation
+    # @option options [Boolean] :philosophical enable philosophical thoughts
+    # @option options [Boolean] :aggressive aggressively passive mode (not recommended)
+    # @option options [Numeric] :duration meditation duration in seconds
     # @return [void]
     def passive_command(options)
       if options[:aggressive]
@@ -100,6 +104,8 @@ module PassiveQueue
     #
     # @param duration [Numeric] meditation duration in seconds
     # @param options [Hash] options hash containing zen or philosophical flags
+    # @option options [Boolean] :zen enable zen quotes during meditation
+    # @option options [Boolean] :philosophical enable philosophical thoughts
     # @return [void]
     def meditate_with_wisdom(duration, options)
       interval = duration / 3.0
