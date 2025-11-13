@@ -1,0 +1,94 @@
+# YARD-Lint Configuration
+# Strict settings: all validators set to error severity and 100% coverage requirement
+
+AllValidators:
+  # Fail on any error severity violation
+  FailOnSeverity: error
+
+  # Require 100% documentation coverage
+  MinCoverage: 100.0
+
+  # Include private and protected methods in validation
+  YardOptions:
+    - --private
+    - --protected
+
+# Documentation Validators - All set to ERROR
+Documentation/UndocumentedObjects:
+  Enabled: true
+  Severity: error
+  Description: All classes, modules, and methods must be documented
+
+Documentation/UndocumentedMethodArguments:
+  Enabled: true
+  Severity: error
+  Description: All method parameters must have @param documentation
+
+Documentation/UndocumentedReturnValue:
+  Enabled: true
+  Severity: error
+  Description: All methods with return values must have @return documentation
+
+Documentation/MinimumDescriptionLength:
+  Enabled: true
+  Severity: error
+  MinLength: 10
+  Description: Documentation must be meaningful (minimum 10 characters)
+
+Documentation/MarkdownSyntax:
+  Enabled: true
+  Severity: error
+  Description: All markdown in documentation must be valid
+
+# Tag Validators - All set to ERROR
+Tags/InvalidTypes:
+  Enabled: true
+  Severity: error
+  Description: Type specifications must use valid YARD syntax
+
+Tags/Order:
+  Enabled: true
+  Severity: error
+  Description: Tags must follow consistent ordering
+
+Tags/CollectionType:
+  Enabled: true
+  Severity: error
+  Description: Collections must use YARD standard syntax (e.g., Hash{K => V}, Array<Type>)
+
+Tags/ExampleSyntax:
+  Enabled: true
+  Severity: error
+  Description: Code in @example tags must be valid Ruby syntax
+
+Tags/MissingTypeInformation:
+  Enabled: true
+  Severity: error
+  Description: Tags requiring types must have type information
+
+Tags/DuplicateTags:
+  Enabled: true
+  Severity: error
+  Description: No duplicate tags allowed (except @param, @option, @raise)
+
+# Code Quality Validators - All set to ERROR
+Quality/EmptyDescription:
+  Enabled: true
+  Severity: error
+  Description: Descriptions cannot be empty or whitespace-only
+
+Quality/InconsistentIndentation:
+  Enabled: true
+  Severity: error
+  Description: Documentation must have consistent indentation
+
+Quality/TrailingWhitespace:
+  Enabled: true
+  Severity: error
+  Description: No trailing whitespace in documentation
+
+# Naming Validators - All set to ERROR
+Naming/InconsistentParameterNames:
+  Enabled: true
+  Severity: error
+  Description: Parameter names in @param tags must match method signature

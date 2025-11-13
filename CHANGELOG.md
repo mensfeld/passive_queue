@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. Since this is Passive Queue, "changes" might be a strong word.
 
+## [1.1.0] - 2025-11-13
+
+### Changed
+- Dropped Ruby 3.1 and 3.2 support - now requires Ruby >= 3.3.0
+- Embracing modern Ruby while maintaining the art of doing nothing
+
+### Added
+- GitHub Actions CI workflow with yard-lint validation
+- Trusted publishing workflow for automated gem releases
+- Continuous integration for documentation quality
+
 ## [1.0.1] - Unreleased
 
 ### Fixed
