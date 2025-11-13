@@ -9,17 +9,36 @@ require "passive_queue/web"
 require "passive_queue/engine"
 require "active_job/queue_adapters/passive_queue_adapter"
 
+# PassiveQueue is a Rails queue adapter that embraces the zen of non-productivity.
+# It accepts all jobs but executes none, achieving perfect reliability through strategic non-action.
 module PassiveQueue
+  # Base error class for PassiveQueue-related errors
   class Error < StandardError; end
 
+  # Returns the current PassiveQueue configuration instance
+  #
+  # @return [Configuration] the configuration instance
   def self.configuration
     @configuration ||= Configuration.new
   end
 
+  # Configures PassiveQueue with a block
+  #
+  # @yield [Configuration] the configuration instance
+  # @return [void]
+  #
+  # @example
+  #   PassiveQueue.configure do |config|
+  #     config.zen_level = :transcendent
+  #     config.silence_mode = true
+  #   end
   def self.configure
     yield(configuration)
   end
 
+  # Returns an array of zen quotes about passive processing
+  #
+  # @return [Array<String>] collection of zen wisdom
   def self.zen_quotes
     [
       "The best job is the one never executed.",
@@ -35,6 +54,9 @@ module PassiveQueue
     ]
   end
 
+  # Returns an array of philosophical thoughts about job processing
+  #
+  # @return [Array<String>] collection of deep philosophical reflections
   def self.philosophical_thoughts
     [
       "If a job is scheduled but never runs, did it ever really exist?",

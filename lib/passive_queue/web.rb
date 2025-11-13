@@ -5,7 +5,12 @@ require 'erb'
 require 'json'
 
 module PassiveQueue
+  # Rack web application providing a dashboard interface for PassiveQueue
   class Web
+    # Rack call method that routes requests to appropriate handlers
+    #
+    # @param env [Hash] Rack environment hash
+    # @return [Array] Rack response triplet [status, headers, body]
     def call(env)
       request = Rack::Request.new(env)
       
@@ -29,11 +34,17 @@ module PassiveQueue
 
     private
 
+    # Renders the main dashboard HTML page
+    #
+    # @return [Array] Rack response with HTML dashboard
     def dashboard_response
       html = dashboard_html
       [200, {'Content-Type' => 'text/html'}, [html]]
     end
 
+    # Returns JSON response with queue statistics
+    #
+    # @return [Array] Rack response with JSON stats data
     def api_stats_response
       stats = {
         jobs_queued: rand(9999..99999),
@@ -51,45 +62,72 @@ module PassiveQueue
       [200, {'Content-Type' => 'application/json'}, [stats.to_json]]
     end
 
+    # Returns JSON response with a random zen quote
+    #
+    # @return [Array] Rack response with JSON zen quote
     def api_zen_response
       quote = PassiveQueue.zen_quotes.sample
       [200, {'Content-Type' => 'application/json'}, [{quote: quote}.to_json]]
     end
 
+    # Returns CSS stylesheet response (unused method)
+    #
+    # @return [Array] Rack response with CSS content
     def css_response
       css = dashboard_css
       [200, {'Content-Type' => 'text/css'}, [css]]
     end
 
+    # Returns the light theme logo SVG
+    #
+    # @return [Array] Rack response with SVG logo
     def logo_response
       svg = logo_svg
       [200, {'Content-Type' => 'image/svg+xml'}, [svg]]
     end
 
+    # Returns the dark theme logo SVG
+    #
+    # @return [Array] Rack response with dark theme SVG logo
     def logo_dark_response
       svg = logo_svg_dark
       [200, {'Content-Type' => 'image/svg+xml'}, [svg]]
     end
 
+    # Returns an empty favicon response
+    #
+    # @return [Array] Rack response with empty favicon
     def favicon_response
       # Return empty response for favicon
       [200, {'Content-Type' => 'image/x-icon'}, ['']]
     end
 
+    # Returns a 404 not found response with zen humor
+    #
+    # @return [Array] Rack response with 404 HTML
     def not_found_response
       [404, {'Content-Type' => 'text/html'}, ['<h1>404 - Page Not Found (Just Like Our Jobs)</h1>']]
     end
 
+    # Reads and returns the light theme logo SVG content
+    #
+    # @return [String] SVG file contents
     def logo_svg
      logo_path = File.join(File.dirname(__FILE__), '..', '..', 'html', 'logo.svg')
      File.read(logo_path)
     end
 
+    # Reads and returns the dark theme logo SVG content
+    #
+    # @return [String] dark theme SVG file contents
     def logo_svg_dark
      logo_path = File.join(File.dirname(__FILE__), '..', '..', 'html', 'logo-dark.svg')
      File.read(logo_path)
     end
 
+    # Generates and returns the complete dashboard HTML
+    #
+    # @return [String] HTML content for the dashboard page
     def dashboard_html
       <<~HTML
         <!DOCTYPE html>

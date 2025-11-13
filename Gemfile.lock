@@ -7,6 +7,11 @@ GEM
   remote: https://rubygems.org/
   specs:
     rake (13.3.0)
+    yard (0.9.37)
+    yard-lint (0.2.1)
+      yard (~> 0.9)
+      zeitwerk (~> 2.6)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   ruby
@@ -15,6 +20,7 @@ PLATFORMS
 DEPENDENCIES
   passive_queue!
   rake (~> 13.0)
+  yard-lint (~> 0.1)
 
 BUNDLED WITH
    2.6.9

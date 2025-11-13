@@ -2,11 +2,20 @@
 # lib/passive_queue/cli.rb
 # ================================
 module PassiveQueue
+  # Command-line interface for PassiveQueue meditation and zen commands
   class CLI
+    # Entry point for the CLI application
+    #
+    # @param args [Array<String>] command-line arguments
+    # @return [void]
     def self.start(args)
       new.run(args)
     end
 
+    # Runs the CLI with provided arguments
+    #
+    # @param args [Array<String>] command-line arguments to process
+    # @return [void]
     def run(args)
       # Parse arguments manually (no Thor dependency)
       options = parse_args(args)
@@ -25,6 +34,10 @@ module PassiveQueue
 
     private
 
+    # Parses command-line arguments into an options hash
+    #
+    # @param args [Array<String>] raw command-line arguments
+    # @return [Hash] parsed options with zen, philosophical, aggressive, and duration keys
     def parse_args(args)
       options = {
         zen: false,
@@ -49,6 +62,10 @@ module PassiveQueue
       options
     end
 
+    # Executes the passive meditation command
+    #
+    # @param options [Hash] parsed command-line options
+    # @return [void]
     def passive_command(options)
       if options[:aggressive]
         puts "❌ Error: Don't be aggressive! The path of the passive queue is one of peace."
@@ -79,6 +96,11 @@ module PassiveQueue
       puts "   Your passive queue energy has been restored."
     end
 
+    # Meditates with zen quotes or philosophical thoughts
+    #
+    # @param duration [Numeric] meditation duration in seconds
+    # @param options [Hash] options hash containing zen or philosophical flags
+    # @return [void]
     def meditate_with_wisdom(duration, options)
       interval = duration / 3.0
       
@@ -94,6 +116,10 @@ module PassiveQueue
       end
     end
 
+    # Meditates silently with animated dots
+    #
+    # @param duration [Numeric] meditation duration in seconds
+    # @return [void]
     def meditate_silently(duration)
       print "   Meditating"
       
@@ -112,6 +138,9 @@ module PassiveQueue
       end
     end
 
+    # Displays help information for the CLI
+    #
+    # @return [void]
     def show_help
       puts <<~HELP
         Passive Queue CLI - The zen of non-productivity
