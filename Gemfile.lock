@@ -6,7 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    rake (13.3.0)
+    rake (13.3.1)
     yard (0.9.37)
     yard-lint (1.2.2)
       yard (~> 0.9)
