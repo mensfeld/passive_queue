@@ -3,4 +3,4 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 13.0"
-gem "yard-lint", "~> 0.1"
+gem "yard-lint"

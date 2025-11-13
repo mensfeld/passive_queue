@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    passive_queue (1.0.1)
+    passive_queue (1.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -20,7 +20,7 @@ PLATFORMS
 DEPENDENCIES
   passive_queue!
   rake (~> 13.0)
-  yard-lint (~> 0.1)
+  yard-lint
 
 BUNDLED WITH
    2.6.9

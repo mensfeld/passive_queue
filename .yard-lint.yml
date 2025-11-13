@@ -1,5 +1,5 @@
 # YARD-Lint Configuration
-# Strict settings: all validators set to error severity and 99% coverage requirement
+# Strict settings: all validators set to error severity and 100% coverage requirement
 
 AllValidators:
   # Fail on any error severity violation
