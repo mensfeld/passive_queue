@@ -26,4 +26,4 @@ jobs:
           ruby-version: '3.4'
           bundler-cache: true
       - name: Run Yard-Lint
-        run: bundle exec yard-lint
+        run: bundle exec yard-lint lib/
