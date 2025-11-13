@@ -19,7 +19,7 @@ PLATFORMS
 
 DEPENDENCIES
   passive_queue!
-  rake (~> 13.0)
+  rake
   yard-lint
 
 BUNDLED WITH
