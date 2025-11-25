@@ -2,8 +2,8 @@
 # Strict settings: all validators set to error severity and 100% coverage requirement
 
 AllValidators:
-  # Fail on any error severity violation
-  FailOnSeverity: error
+  # Fail on any convention or higher severity violation
+  FailOnSeverity: convention
 
   # Require 100% documentation coverage
   MinCoverage: 100.0
