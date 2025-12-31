@@ -23,7 +23,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4'
+          ruby-version: '4.0.0'
           bundler-cache: true
       - name: Run Yard-Lint
         run: bundle exec yard-lint lib/
