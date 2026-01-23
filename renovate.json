@@ -11,6 +11,7 @@
   "includePaths": [
     ".ruby-version",
     "Gemfile",
-    "passive_queue.gemspec"
+    "passive_queue.gemspec",
+    ".github/workflows/**"
   ]
 }
