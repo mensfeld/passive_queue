@@ -9,6 +9,7 @@
     "pinDigests": true
   },
   "includePaths": [
+    ".ruby-version",
     "Gemfile",
     "passive_queue.gemspec"
   ]
