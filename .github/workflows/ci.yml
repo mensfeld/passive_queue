@@ -18,6 +18,8 @@ jobs:
   yard-lint:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: Gemfile.lint
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
