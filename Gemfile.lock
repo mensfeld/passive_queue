@@ -6,15 +6,31 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    docile (1.4.1)
+    drb (2.2.3)
+    minitest (6.0.2)
+      drb (~> 2.0)
+      prism (~> 1.5)
+    prism (1.9.0)
+    rack (3.2.5)
     rake (13.3.1)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.2)
+    simplecov_json_formatter (0.1.4)
 
 PLATFORMS
   ruby
   x86_64-linux
 
 DEPENDENCIES
+  minitest
   passive_queue!
+  rack
   rake
+  simplecov
 
 BUNDLED WITH
   4.0.3
