@@ -1,4 +1,5 @@
-require 'test_helper'
+# frozen_string_literal: true
+
 require 'rack'
 
 describe PassiveQueue::Engine do

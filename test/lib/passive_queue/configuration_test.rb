@@ -1,4 +1,4 @@
-require 'test_helper'
+# frozen_string_literal: true
 
 describe PassiveQueue::Configuration do
   let(:config) { PassiveQueue::Configuration.new }

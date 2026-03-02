@@ -1,4 +1,4 @@
-require 'test_helper'
+# frozen_string_literal: true
 
 describe PassiveQueue::VERSION do
   it 'is a string' do
