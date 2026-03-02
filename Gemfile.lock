@@ -6,6 +6,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    drb (2.2.3)
+    minitest (6.0.2)
+      drb (~> 2.0)
+      prism (~> 1.5)
+    prism (1.9.0)
+    rack (3.2.5)
     rake (13.3.1)
 
 PLATFORMS
@@ -13,7 +19,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  minitest
   passive_queue!
+  rack
   rake
 
 BUNDLED WITH

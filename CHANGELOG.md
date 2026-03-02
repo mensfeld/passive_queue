@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. Since this is Passive Queue, "changes" might be a strong word.
 
+## [Unreleased]
+
+### Added
+- Minitest test suite with Minitest::Spec style tests
+
 ## [1.1.0] - 2025-11-13
 
 ### Changed
