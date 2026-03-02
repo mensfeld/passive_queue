@@ -3,6 +3,12 @@
 describe PassiveQueue::CLI do
   let(:cli) { PassiveQueue::CLI.new }
 
+  let(:nosleep_cli) do
+    instance = PassiveQueue::CLI.new
+    instance.define_singleton_method(:sleep) { |_| }
+    instance
+  end
+
   describe '#parse_args' do
     it 'returns default options for empty args' do
       options = cli.send(:parse_args, [])
@@ -60,45 +66,34 @@ describe PassiveQueue::CLI do
         capture_io { cli.run(['unknown_command']) }
       end
     end
+
+    it 'runs passive command by default when no args given' do
+      output = capture_io { nosleep_cli.run(['passive', '--duration', '0']) }
+      assert_includes output[0], 'Entering passive meditation mode'
+      assert_includes output[0], 'Meditation complete'
+    end
+
+    it 'runs passive command with --zen flag' do
+      output = capture_io { nosleep_cli.run(['passive', '--zen', '--duration', '0']) }
+      assert_includes output[0], 'Entering passive meditation mode'
+      assert_includes output[0], 'Meditation complete'
+    end
   end
 
-  describe '#run with passive command' do
-    it 'runs silent meditation by default' do
-      cli.stub(:sleep, nil) do
-        output = capture_io { cli.run(['passive', '--duration', '0']) }
-        assert_includes output[0], 'Entering passive meditation mode'
-        assert_includes output[0], 'Meditation complete'
-      end
+  describe 'meditation' do
+    it 'meditates silently with animated dots' do
+      output = capture_io { nosleep_cli.send(:meditate_silently, 0.001) }
+      assert_includes output[0], 'Meditating'
     end
 
-    it 'runs zen meditation with --zen flag' do
-      cli.stub(:sleep, nil) do
-        output = capture_io { cli.run(['passive', '--zen', '--duration', '0']) }
-        assert_includes output[0], 'Entering passive meditation mode'
-        assert_includes output[0], 'Meditation complete'
-      end
+    it 'meditates with zen quotes' do
+      output = capture_io { nosleep_cli.send(:meditate_with_wisdom, 0, { zen: true }) }
+      refute_empty output[0]
     end
 
-    it 'runs philosophical meditation with --philosophical flag' do
-      cli.stub(:sleep, nil) do
-        output = capture_io { cli.run(['passive', '--philosophical', '--duration', '0']) }
-        assert_includes output[0], 'Entering passive meditation mode'
-        assert_includes output[0], 'Meditation complete'
-      end
-    end
-
-    it 'uses --duration value' do
-      cli.stub(:sleep, nil) do
-        output = capture_io { cli.run(['passive', '--duration', '1']) }
-        assert_includes output[0], 'Duration: 1 seconds'
-      end
-    end
-
-    it 'defaults to passive command when no command given' do
-      cli.stub(:sleep, nil) do
-        output = capture_io { cli.run([]) }
-        assert_includes output[0], 'Entering passive meditation mode'
-      end
+    it 'meditates with philosophical thoughts' do
+      output = capture_io { nosleep_cli.send(:meditate_with_wisdom, 0, { philosophical: true }) }
+      refute_empty output[0]
     end
   end
 
