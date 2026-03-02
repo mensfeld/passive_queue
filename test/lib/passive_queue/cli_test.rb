@@ -61,4 +61,53 @@ describe PassiveQueue::CLI do
       end
     end
   end
+
+  describe '#run with passive command' do
+    it 'runs silent meditation by default' do
+      cli.stub(:sleep, nil) do
+        output = capture_io { cli.run(['passive', '--duration', '0']) }
+        assert_includes output[0], 'Entering passive meditation mode'
+        assert_includes output[0], 'Meditation complete'
+      end
+    end
+
+    it 'runs zen meditation with --zen flag' do
+      cli.stub(:sleep, nil) do
+        output = capture_io { cli.run(['passive', '--zen', '--duration', '0']) }
+        assert_includes output[0], 'Entering passive meditation mode'
+        assert_includes output[0], 'Meditation complete'
+      end
+    end
+
+    it 'runs philosophical meditation with --philosophical flag' do
+      cli.stub(:sleep, nil) do
+        output = capture_io { cli.run(['passive', '--philosophical', '--duration', '0']) }
+        assert_includes output[0], 'Entering passive meditation mode'
+        assert_includes output[0], 'Meditation complete'
+      end
+    end
+
+    it 'uses --duration value' do
+      cli.stub(:sleep, nil) do
+        output = capture_io { cli.run(['passive', '--duration', '1']) }
+        assert_includes output[0], 'Duration: 1 seconds'
+      end
+    end
+
+    it 'defaults to passive command when no command given' do
+      cli.stub(:sleep, nil) do
+        output = capture_io { cli.run([]) }
+        assert_includes output[0], 'Entering passive meditation mode'
+      end
+    end
+  end
+
+  describe '.start' do
+    it 'creates a new instance and runs it' do
+      output = capture_io do
+        assert_raises(SystemExit) { PassiveQueue::CLI.start(['unknown']) }
+      end
+      assert_includes output[0], 'Unknown command'
+    end
+  end
 end

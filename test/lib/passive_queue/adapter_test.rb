@@ -49,5 +49,18 @@ describe PassiveQueue::Adapter do
       output = capture_io { adapter.enqueue(job) }
       refute_empty output[0]
     end
+
+    it 'logs enqueue_at output when silence_mode is disabled' do
+      PassiveQueue.configuration.silence_mode = false
+      output = capture_io { adapter.enqueue_at(job, Time.now.to_i) }
+      assert_includes output[0], 'Scheduled FakeJob'
+    end
+
+    it 'includes arguments in enqueue output when present' do
+      PassiveQueue.configuration.silence_mode = false
+      job_with_args = FakeJob.new([1, 2], 'default')
+      output = capture_io { adapter.enqueue(job_with_args) }
+      assert_includes output[0], 'Arguments:'
+    end
   end
 end
