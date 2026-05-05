@@ -13,7 +13,7 @@ GEM
       prism (~> 1.5)
     prism (1.9.0)
     rack (3.2.5)
-    rake (13.3.1)
+    rake (13.4.2)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
