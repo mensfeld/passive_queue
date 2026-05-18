@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file. Since this 
 
 ## [Unreleased]
 
-### Added
-- Minitest test suite with Minitest::Spec style tests
+## [1.1.1] - 2026-05-18
+
+### Changed
+- Replaced expired `passivequeue.pro` and `passivequeue.io` domain references with the GitHub repository URL and maintainer email
 
 ## [1.1.0] - 2025-11-13
 
