@@ -4,15 +4,15 @@ Gem::Specification.new do |spec|
   spec.name = "passive_queue"
   spec.version = PassiveQueue::VERSION
   spec.authors = ["Maciej Mensfeld"]
-  spec.email = ["void@passivequeue.pro"]
+  spec.email = ["maciej@mensfeld.pl"]
 
   spec.summary = "A Rails queue adapter that embraces the zen of non-productivity"
   spec.description = "Rails queue adapter for mindful developers. Accepts all jobs, executes none. Perfect reliability through strategic non-action."
-  spec.homepage = "https://passivequeue.pro"
+  spec.homepage = "https://github.com/mensfeld/passive_queue"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3.0"
 
-  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["homepage_uri"] = "https://github.com/mensfeld/passive_queue"
   spec.metadata["source_code_uri"] = "https://github.com/mensfeld/passive_queue"
   spec.metadata["changelog_uri"] = "https://github.com/mensfeld/passive_queue/blob/main/CHANGELOG.md"
 
