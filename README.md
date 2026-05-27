@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/logo.svg" alt="passive queue logo" width="200">
+  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/master/html/logo.svg" alt="passive queue logo" width="200">
 </div>
 
 # Passive Queue
@@ -61,7 +61,7 @@ Experience Passive Queue in action with our beautiful dashboard:
 Visit `/passive_queue` to witness the art of non-productivity in real-time with dark/light mode support!
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/main/html/web-ui.png" alt="passive queue dashboard">
+  <img src="https://raw.githubusercontent.com/mensfeld/passive_queue/refs/heads/master/html/web-ui.png" alt="passive queue dashboard">
 </div>
 
 ## Simple, Transparent Pricing
