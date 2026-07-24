@@ -1,6 +1,3 @@
-# ================================
-# lib/passive_queue/engine.rb
-# ================================
 module PassiveQueue
   # Rack engine that mounts the PassiveQueue web dashboard in Rails applications
   class Engine

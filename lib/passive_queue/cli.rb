@@ -1,6 +1,3 @@
-# ================================
-# lib/passive_queue/cli.rb
-# ================================
 module PassiveQueue
   # Command-line interface for PassiveQueue meditation and zen commands
   class CLI
