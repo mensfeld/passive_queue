@@ -55,6 +55,26 @@ Documentation/BlankLineBeforeDefinition:
     SingleBlankLine: true
     OrphanedDocs: true
 
+Documentation/DuplicateNamespaceComment:
+  Description: Detects namespaces documented with a YARD comment in more than one file.
+  Enabled: true
+  Severity: error
+
+Documentation/UnderfilledLines:
+  Description: Detects documentation prose that wraps too early and wastes horizontal space.
+  Enabled: true
+  Severity: error
+  # Aligned with RuboCop's Layout/LineLength so documentation prose wraps to the same
+  # width as code.
+  MaxLength: 120
+
+Documentation/LineLength:
+  Description: Detects documentation lines that exceed the maximum length.
+  Enabled: true
+  Severity: error
+  # Aligned with RuboCop's Layout/LineLength.
+  MaxLength: 120
+
 # Tags validators
 Tags/Order:
   Description: Tags must follow consistent ordering
@@ -177,7 +197,7 @@ Tags/RedundantParamDescription:
 Tags/InformalNotation:
   Description: Detects informal tag notation patterns like "Note:" instead of @note.
   Enabled: true
-  Severity: warning
+  Severity: error
   CaseSensitive: false
   RequireStartOfLine: true
   Patterns:

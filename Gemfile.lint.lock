@@ -1,11 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    yard (0.9.38)
-    yard-lint (1.4.0)
+    yard (0.9.45)
+    yard-lint (1.10.1)
       yard (~> 0.9)
       zeitwerk (~> 2.6)
-    zeitwerk (2.7.4)
+    zeitwerk (2.8.2)
 
 PLATFORMS
   ruby
@@ -15,9 +15,10 @@ DEPENDENCIES
   yard-lint
 
 CHECKSUMS
-  yard (0.9.38) sha256=721fb82afb10532aa49860655f6cc2eaa7130889df291b052e1e6b268283010f
-  yard-lint (1.4.0) sha256=7dd88fbb08fd77cb840bea899d58812817b36d92291b5693dd0eeb3af9f91f0f
-  zeitwerk (2.7.4) sha256=2bef90f356bdafe9a6c2bd32bcd804f83a4f9b8bc27f3600fff051eb3edcec8b
+  bundler (4.0.17) sha256=214e21431b5665dd2f99df8a5511c6b151d7a72e8015c8b38f8b775b61cbb6c1
+  yard (0.9.45) sha256=52e211493f7cb8a3ebf7e104a25a1e73937a3103092545d34cb88fafebb3dc51
+  yard-lint (1.10.1) sha256=172ea1905304580bd515c093d82831ec4889e725100c49d5bf77e62101f49129
+  zeitwerk (2.8.2) sha256=7212a61311083c604184b1ea2574b9aa05cd14f855a0841c06985cabe9181d12
 
 BUNDLED WITH
-  4.0.3
+  4.0.17
