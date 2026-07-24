@@ -634,9 +634,6 @@ module PassiveQueue
   end
 end
 
-# ================================
-# lib/passive_queue/engine.rb  
-# ================================
 module PassiveQueue
   class Engine
     def self.call(env)

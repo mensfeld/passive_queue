@@ -1,6 +1,3 @@
-# ================================
-# lib/passive_queue/configuration.rb
-# ================================
 module PassiveQueue
   # Configuration settings for PassiveQueue behavior and aesthetics
   class Configuration
