@@ -13,7 +13,7 @@ GEM
     prism (1.9.0)
     rack (3.2.7)
     rake (13.4.2)
-    simplecov (1.1.1)
+    simplecov (1.2.0)
 
 PLATFORMS
   ruby
