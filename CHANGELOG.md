@@ -4,9 +4,6 @@ All notable changes to this project will be documented in this file. Since this 
 
 ## [Unreleased]
 
-### Fixed
-- Potential technical overhead by adding RSpec to the gem?
-
 ## [1.1.1] - 2026-05-18
 
 ### Changed
