@@ -170,7 +170,7 @@ bundle exec be passive --duration 30
 ```ruby
 # config/initializers/passive_queue.rb
 PassiveQueue.configure do |config|
-  config.meditation_duration = 10    # seconds (the `be` CLI ignores it; use --duration)
+  config.meditation_duration = 10    # seconds; currently has no effect (use `be passive --duration`)
   config.zen_level = :transcendent    # :low, :medium, :high, :transcendent
   config.philosophical_depth = :deep  # :shallow, :deep, :profound, :existential
   config.silence_mode = false         # suppress all output
@@ -223,7 +223,7 @@ end
 
 ```ruby
 PassiveQueue.configure do |config|
-  config.meditation_duration = 5        # Duration in seconds (default: 5); the `be` CLI ignores it, use --duration
+  config.meditation_duration = 5        # Duration in seconds (default: 5); currently has no effect (use `be passive --duration`)
   config.zen_level = :medium            # :low, :medium, :high, :transcendent
   config.philosophical_depth = :shallow # :shallow, :deep, :profound, :existential
   config.silence_mode = false           # Suppress all enlightening output
