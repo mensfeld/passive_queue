@@ -20,11 +20,6 @@ All notable changes to this project will be documented in this file. Since this 
 - Trusted publishing workflow for automated gem releases
 - Continuous integration for documentation quality
 
-## [1.0.1] - Unreleased
-
-### Fixed
-- Potential technical overhead by adding RSpec to the gem?
-
 ## [1.0.0] - 2025-07-12
 
 ### Added
@@ -37,7 +32,6 @@ All notable changes to this project will be documented in this file. Since this 
 - Infinite scalability through the power of void
 - Perfect compatibility with existing Rails applications
 - Zen quotes and philosophical thoughts for enlightenment
-- Rails generator for effortless non-setup
 - Complete test suite that tests nothing happening
 
 ### Changed
@@ -94,17 +88,6 @@ All notable changes to this project will be documented in this file. Since this 
 - Advanced meditation techniques
 - Quantum non-processing algorithms
 - AI-powered passivity recommendations
-
-### [1.1.0] - The Mindfulness Patch  
-- Additional zen quotes
-- Philosophical depth improvements
-- Enhanced CLI meditation experience
-- More ways to do nothing
-
-### [1.0.1] - The Serenity Hotfix
-- Fixed a bug where something almost happened
-- Improved the accuracy of non-execution
-- Enhanced the beauty of emptiness
 
 ---
 
