@@ -170,7 +170,7 @@ bundle exec be passive --duration 30
 ```ruby
 # config/initializers/passive_queue.rb
 PassiveQueue.configure do |config|
-  config.meditation_duration = 10    # seconds; currently has no effect (use `be passive --duration`)
+  config.meditation_duration = 10    # seconds; `be passive --duration` overrides it
   config.zen_level = :transcendent    # :low, :medium, :high, :transcendent
   config.philosophical_depth = :deep  # :shallow, :deep, :profound, :existential
   config.silence_mode = false         # suppress all output
@@ -223,7 +223,7 @@ end
 
 ```ruby
 PassiveQueue.configure do |config|
-  config.meditation_duration = 5        # Duration in seconds (default: 5); currently has no effect (use `be passive --duration`)
+  config.meditation_duration = 5        # Duration in seconds (default: 5); `be passive --duration` overrides it
   config.zen_level = :medium            # :low, :medium, :high, :transcendent
   config.philosophical_depth = :shallow # :shallow, :deep, :profound, :existential
   config.silence_mode = false           # Suppress all enlightening output
@@ -342,7 +342,7 @@ be passive --zen              # Enable zen quotes during meditation
 be passive --philosophical    # Enable philosophical thoughts  
 be passive --duration 10      # Set meditation duration (seconds)
 be passive --aggressive       # ERROR: Conflicts with zen philosophy
-be --help                     # Show enlightening help message (also: be help, be -h)
+be passive --help             # Show enlightening help message (also: be --help, be help, be -h)
 ```
 
 Example CLI session:
@@ -359,11 +359,9 @@ $ be passive --zen --duration 10
 
 💭 A queue that does nothing is a queue that never fails.
 
-✨ Meditation complete! You successfully did nothing for 6.67 seconds.
+✨ Meditation complete! You successfully did nothing for 10.0 seconds.
    Your passive queue energy has been restored.
 ```
-
-With `--zen` or `--philosophical`, the CLI sleeps only between the three messages, so the session lasts about two thirds of `--duration`.
 
 ### ActiveJob Integration API
 
