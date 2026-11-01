@@ -70,7 +70,7 @@ module PassiveQueue
     # @option options [Boolean] :zen enable zen quotes during meditation
     # @option options [Boolean] :philosophical enable philosophical thoughts
     # @option options [Boolean] :aggressive aggressively passive mode (not recommended)
-    # @option options [Numeric] :duration meditation duration in seconds
+    # @option options [Numeric, nil] :duration meditation duration in seconds; nil uses config.meditation_duration
     # @return [void]
     def passive_command(options)
       if options[:aggressive]
