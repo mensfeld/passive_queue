@@ -17,10 +17,12 @@ module PassiveQueue
       # Parse arguments manually (no Thor dependency)
       options = parse_args(args)
 
+      return show_help if options[:help]
+
       case args.first
       when "passive", nil
         passive_command(options)
-      when "help", "-h", "--help"
+      when "help"
         show_help
       else
         puts "Unknown command: #{args.first}"
@@ -34,13 +36,14 @@ module PassiveQueue
     # Parses command-line arguments into an options hash
     #
     # @param args [Array<String>] raw command-line arguments
-    # @return [Hash] parsed options with zen, philosophical, aggressive, and duration keys
+    # @return [Hash] parsed options with zen, philosophical, aggressive, help, and duration keys
     def parse_args(args)
       options = {
         zen: false,
         philosophical: false,
         aggressive: false,
-        duration: 5
+        help: false,
+        duration: nil
       }
 
       args.each_with_index do |arg, index|
@@ -51,6 +54,8 @@ module PassiveQueue
           options[:philosophical] = true
         when "--aggressive"
           options[:aggressive] = true
+        when "--help", "-h"
+          options[:help] = true
         when "--duration"
           options[:duration] = args[index + 1].to_i if args[index + 1]
         end
@@ -65,7 +70,7 @@ module PassiveQueue
     # @option options [Boolean] :zen enable zen quotes during meditation
     # @option options [Boolean] :philosophical enable philosophical thoughts
     # @option options [Boolean] :aggressive aggressively passive mode (not recommended)
-    # @option options [Numeric] :duration meditation duration in seconds
+    # @option options [Numeric, nil] :duration meditation duration in seconds; nil uses config.meditation_duration
     # @return [void]
     def passive_command(options)
       if options[:aggressive]
@@ -114,7 +119,7 @@ module PassiveQueue
           puts "🤔 #{PassiveQueue.philosophical_thoughts.sample}"
         end
         
-        sleep(interval) unless i == 2
+        sleep(interval)
         puts "" unless i == 2
       end
     end
@@ -155,7 +160,7 @@ module PassiveQueue
           --zen              Enable zen quotes during meditation
           --philosophical    Enable philosophical thoughts
           --aggressive       Be aggressively passive (not recommended)
-          --duration N       Set meditation duration in seconds (default: 5)
+          --duration N       Set meditation duration in seconds (default: config.meditation_duration, 5)
           --help, -h         Show this help message
         
         Examples:

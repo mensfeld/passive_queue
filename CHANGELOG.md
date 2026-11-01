@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Since this 
 
 ## [Unreleased]
 
+### Fixed
+- `be passive --help` (and `-h` at any position) shows help instead of starting a meditation
+- `config.meditation_duration` is used when `--duration` is not given
+- `--zen` and `--philosophical` sessions now last the full `--duration` instead of about two thirds of it
+
 ## [1.1.1] - 2026-05-18
 
 ### Changed
