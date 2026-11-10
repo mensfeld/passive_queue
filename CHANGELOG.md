@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. Since this is Passive Queue, "changes" might be a strong word.
 
-## [Unreleased]
+## [1.1.2] - 2026-11-10
 
 ### Fixed
 - `be passive --help` (and `-h` at any position) shows help instead of starting a meditation
