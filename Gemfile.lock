@@ -7,9 +7,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     drb (2.2.3)
-    minitest (6.0.6)
+    minitest (6.1.0)
       drb (~> 2.0)
-      prism (~> 1.5)
+      prism (>= 1.5, < 3)
     prism (1.9.0)
     rack (3.2.8)
     rake (13.4.2)
